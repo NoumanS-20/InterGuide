@@ -1,7 +1,11 @@
 import threading
 import time
 from audio_capture import AudioCapture
-from speech_recognition import SpeechRecognizer
+try:
+    from speech_recognition import SpeechRecognizer
+except ImportError:
+    # Fallback to alternative implementation for Python 3.14+
+    from speech_recognition_alt import SpeechRecognizer
 from answer_generator import AnswerGenerator
 from overlay_gui import OverlayWindow
 from config import Config
