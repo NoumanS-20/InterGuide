@@ -1,13 +1,23 @@
-pyaudio==0.2.14
-openai==1.54.0
-openai-whisper==20231117
-pynput==1.7.7
-keyboard==0.13.5
-pywin32==306
-sounddevice==0.4.7
-numpy==1.26.4
-scipy==1.13.1
-torch==2.3.0
-tiktoken==0.7.0
-python-dotenv==1.0.1
-requests==2.32.3
+# Core dependencies (install first)
+numpy>=1.24.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Audio processing
+sounddevice>=0.4.6
+
+# OpenAI and AI models
+openai>=1.0.0
+tiktoken>=0.5.0
+
+# Whisper dependencies
+openai-whisper>=20231117
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# GUI and hotkeys
+pynput>=1.7.6
+keyboard>=0.13.5
+
+# Windows-specific
+pywin32>=305; sys_platform == 'win32'
