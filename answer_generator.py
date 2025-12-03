@@ -1,5 +1,7 @@
 from openai import OpenAI
 from config import Config
+import base64
+from io import BytesIO
 
 class AnswerGenerator:
     """Generates answers to interview questions using OpenAI API"""
@@ -19,13 +21,14 @@ class AnswerGenerator:
         self.client = OpenAI(api_key=self.api_key)
         print("Answer generator initialized")
         
-    def generate_answer(self, question, context=None):
+    def generate_answer(self, question, context=None, screenshot=None):
         """
         Generate an answer to the interview question
         
         Args:
             question: The interview question text
             context: Optional additional context or previous conversation
+            screenshot: Optional PIL Image object of screen capture
             
         Returns:
             str: Generated answer
@@ -52,10 +55,31 @@ class AnswerGenerator:
             # Add conversation history (last 3 exchanges)
             messages.extend(self.conversation_history[-6:])
             
+            # Prepare user message content
+            user_content = [{"type": "text", "text": f"Interview question: {question}"}]
+            
+            # Add screenshot if provided (for vision model)
+            if screenshot and "gpt-4" in self.model:
+                try:
+                    # Convert PIL Image to base64
+                    buffered = BytesIO()
+                    screenshot.save(buffered, format="PNG")
+                    img_base64 = base64.b64encode(buffered.getvalue()).decode()
+                    
+                    user_content.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{img_base64}",
+                            "detail": "low"  # Use 'low' for cost efficiency
+                        }
+                    })
+                except Exception as e:
+                    print(f"Warning: Could not process screenshot: {e}")
+            
             # Add current question
             messages.append({
                 "role": "user",
-                "content": f"Interview question: {question}"
+                "content": user_content if screenshot and "gpt-4" in self.model else f"Interview question: {question}"
             })
             
             # Generate response

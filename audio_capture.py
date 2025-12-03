@@ -88,6 +88,10 @@ class AudioCapture:
                 
         return self.stop_recording()
     
+    def record_chunk(self, duration=5):
+        """Record a chunk of audio (alias for get_audio_chunk)"""
+        return self.get_audio_chunk(duration)
+    
     def is_silent(self, audio_chunk):
         """Check if audio chunk is silent"""
         if audio_chunk is None or len(audio_chunk) == 0:

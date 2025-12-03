@@ -12,7 +12,7 @@ class OverlayWindow:
         
         # Window configuration
         self.window_width = Config.WINDOW_WIDTH
-        self.window_height = Config.WINDOW_HEIGHT
+        self.window_height = Config.WINDOW_HEIGHT + 30  # Extra space for recording bar
         self.opacity = Config.WINDOW_OPACITY
         
         # Position window in top-right corner
@@ -30,17 +30,34 @@ class OverlayWindow:
         style = ttk.Style()
         style.theme_use('clam')
         
-        self._create_widgets()
         self.is_visible = True
+        self.is_recording = False
+        self.screen_reading = False
+        
+        self._create_widgets()
         
     def _create_widgets(self):
         """Create UI widgets"""
+        # Recording indicator bar (at the very top)
+        self.recording_bar = tk.Frame(self.root, bg='#444444', height=30)
+        self.recording_bar.grid(row=0, column=0, sticky=(tk.W, tk.E))
+        
+        self.recording_label = tk.Label(
+            self.recording_bar,
+            text="⚫ IDLE",
+            fg="white",
+            bg="#444444",
+            font=('Arial', 10, 'bold'),
+            pady=5
+        )
+        self.recording_label.pack()
+        
         # Main frame
         main_frame = ttk.Frame(self.root, padding="10")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
+        self.root.rowconfigure(1, weight=1)
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(2, weight=1)
         
@@ -52,10 +69,10 @@ class OverlayWindow:
         )
         title_label.grid(row=0, column=0, sticky=tk.W, pady=(0, 5))
         
-        # Status label
+        # Status label with screen reading indicator
         self.status_label = ttk.Label(
             main_frame,
-            text="Status: Ready (Ctrl+Shift+L to start)",
+            text="Status: Ready (Ctrl+Shift+L to start) | Screen Reading: OFF",
             font=('Arial', 9)
         )
         self.status_label.grid(row=1, column=0, sticky=tk.W, pady=(0, 10))
@@ -96,6 +113,14 @@ class OverlayWindow:
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(10, 0))
         
+        # Listening control button
+        self.listen_button = ttk.Button(
+            button_frame,
+            text="▶ Start Listening (Ctrl+Shift+L)",
+            command=self.on_listen_button_click
+        )
+        self.listen_button.pack(side=tk.LEFT, padx=5)
+        
         # Buttons
         self.clear_button = ttk.Button(
             button_frame,
@@ -104,12 +129,12 @@ class OverlayWindow:
         )
         self.clear_button.pack(side=tk.LEFT, padx=5)
         
-        self.hide_button = ttk.Button(
+        self.screen_button = ttk.Button(
             button_frame,
-            text="Hide (Ctrl+Shift+H)",
-            command=self.toggle_visibility
+            text="Screen: OFF (Ctrl+Shift+S)",
+            command=self.on_screen_button_click
         )
-        self.hide_button.pack(side=tk.LEFT, padx=5)
+        self.screen_button.pack(side=tk.LEFT, padx=5)
         
         self.opacity_scale = ttk.Scale(
             button_frame,
@@ -117,16 +142,54 @@ class OverlayWindow:
             to=1.0,
             orient=tk.HORIZONTAL,
             command=self.change_opacity,
-            length=150
+            length=120
         )
         self.opacity_scale.set(self.opacity)
         self.opacity_scale.pack(side=tk.RIGHT, padx=5)
         
         ttk.Label(button_frame, text="Opacity:").pack(side=tk.RIGHT)
+    
+    def set_recording_status(self, is_recording):
+        """Update the recording indicator bar"""
+        self.is_recording = is_recording
+        if is_recording:
+            self.recording_bar.config(bg='#ff4444')
+            self.recording_label.config(
+                text="🔴 RECORDING",
+                bg='#ff4444'
+            )
+            self.listen_button.config(text="⏸ Stop Listening (Ctrl+Shift+L)")
+            self.update_status_text()
+        else:
+            self.recording_bar.config(bg='#444444')
+            self.recording_label.config(
+                text="⚫ IDLE",
+                bg='#444444'
+            )
+            self.listen_button.config(text="▶ Start Listening (Ctrl+Shift+L)")
+            self.update_status_text()
+    
+    def set_screen_reading(self, enabled):
+        """Update screen reading status"""
+        self.screen_reading = enabled
+        button_text = f"Screen: {'ON' if enabled else 'OFF'} (Ctrl+Shift+S)"
+        self.screen_button.config(text=button_text)
+        self.update_status_text()
+    
+    def update_status_text(self):
+        """Update the status label"""
+        if self.is_recording:
+            status = "Listening for questions..."
+        else:
+            status = "Ready (Ctrl+Shift+L to start)"
+        
+        screen_status = "ON" if self.screen_reading else "OFF"
+        self.status_label.config(text=f"Status: {status} | Screen Reading: {screen_status}")
         
     def update_status(self, status_text):
-        """Update status label"""
-        self.status_label.config(text=f"Status: {status_text}")
+        """Update status label with custom text"""
+        screen_status = "ON" if self.screen_reading else "OFF"
+        self.status_label.config(text=f"Status: {status_text} | Screen Reading: {screen_status}")
         
     def display_question(self, question):
         """Display the detected question"""
@@ -156,6 +219,14 @@ class OverlayWindow:
         else:
             self.root.deiconify()
             self.is_visible = True
+    
+    def on_screen_button_click(self):
+        """Placeholder for screen button click - will be connected in main.py"""
+        pass
+    
+    def on_listen_button_click(self):
+        """Placeholder for listen button click - will be connected in main.py"""
+        pass
             
     def show(self):
         """Show the window"""

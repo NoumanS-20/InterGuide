@@ -31,17 +31,25 @@ class Config:
     HOTKEY_START_STOP = 'ctrl+shift+l'  # Start/Stop listening
     HOTKEY_CLEAR = 'ctrl+shift+c'  # Clear display
     HOTKEY_TOGGLE_WINDOW = 'ctrl+shift+h'  # Hide/Show window
+    HOTKEY_SCREEN_READING = 'ctrl+shift+s'  # Toggle screen reading
     
     # System Prompt for Answer Generation
     SYSTEM_PROMPT = """You are an intelligent interview assistant. Your role is to provide clear, 
-concise, and accurate answers to interview questions. Focus on:
+concise, and accurate answers to interview questions.
+
+When analyzing screenshots:
+- Look for visible text, code, diagrams, or questions on screen
+- Incorporate relevant visual information into your answer
+- Mention if you see technical details that support your response
+
+Focus on:
 1. Providing technically accurate information
 2. Structuring answers using the STAR method when appropriate (Situation, Task, Action, Result)
-3. Being concise but comprehensive
+3. Being concise but comprehensive (under 200 words)
 4. Highlighting key points that demonstrate competence
-5. Suggesting follow-up points if relevant
+5. Using any visible screen content to enhance your answer
 
-Keep answers under 200 words unless the question requires more detail."""
+Keep answers professional and interview-appropriate."""
 
     @classmethod
     def validate(cls):

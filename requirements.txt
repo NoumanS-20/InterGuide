@@ -2,11 +2,15 @@
 numpy>=1.24.0
 python-dotenv>=1.0.0
 requests>=2.31.0
+pyinstaller>=6.0.0
 
 # Audio processing
 sounddevice>=0.4.6
 SpeechRecognition>=3.10.0
-PyAudio>=0.2.13
+
+# Screen capture
+mss>=9.0.0
+Pillow>=10.0.0
 
 # OpenAI and AI models
 openai>=1.0.0

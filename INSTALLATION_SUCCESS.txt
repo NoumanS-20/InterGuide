@@ -1,0 +1,63 @@
+==========================================================
+  InterGuide - Desktop Application Setup Complete! ✓
+==========================================================
+
+🎉 INSTALLATION SUCCESSFUL!
+
+📍 Your desktop now has an "InterGuide" icon!
+
+HOW TO USE:
+-----------
+1. Double-click the "InterGuide" icon on your desktop
+2. The app window will appear in the top-right corner
+3. Click "▶ Start Listening" button to begin
+4. Speak or let someone ask a question
+5. Read the AI-generated answer from the window
+
+CONTROLS:
+---------
+GUI Buttons (Always Work):
+  • ▶ Start Listening - Begin recording
+  • ⏸ Stop Listening - Pause recording
+  • Screen: OFF/ON - Toggle screen capture
+  • Clear - Clear the display
+
+Hotkeys (Requires Administrator):
+  • Ctrl+Shift+L - Start/Stop listening
+  • Ctrl+Shift+S - Toggle screen reading
+  • Ctrl+Shift+C - Clear display
+  • Ctrl+Shift+H - Hide/Show window
+
+FEATURES:
+---------
+🔴 Recording Indicator - Red bar shows when listening
+📸 Screen Reading - Captures and analyzes screen content
+🤖 AI-Powered Answers - Uses OpenAI GPT for responses
+💬 Context Awareness - Remembers conversation history
+
+TIPS:
+-----
+• For hotkeys to work: Right-click icon → Properties → 
+  Advanced → "Run as administrator"
+• Position window where you can glance naturally
+• Use answers as talking points, not scripts
+• Enable screen reading for technical interviews
+
+FILES CREATED:
+--------------
+✓ Desktop\InterGuide.lnk - Desktop shortcut
+✓ InterGuide.vbs - Silent launcher
+✓ InterGuide.bat - Console launcher
+✓ setup.py - Installer script
+
+TROUBLESHOOTING:
+----------------
+• Icon doesn't work? → Run install.bat again
+• Hotkeys not working? → Run as Administrator
+• App crashes? → Check .env has your API key
+
+READY TO GO!
+------------
+Double-click the InterGuide icon on your desktop! 🚀
+
+==========================================================

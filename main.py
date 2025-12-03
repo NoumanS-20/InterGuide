@@ -5,6 +5,7 @@ from audio_capture import AudioCapture
 from speech_recognition_alt import SpeechRecognizer
 from answer_generator import AnswerGenerator
 from overlay_gui import OverlayWindow
+from screen_capture import ScreenCapture
 from config import Config
 import keyboard
 
@@ -15,9 +16,11 @@ class InterviewAssistant:
         self.audio_capture = AudioCapture()
         self.speech_recognizer = SpeechRecognizer()
         self.answer_generator = AnswerGenerator()
+        self.screen_capture = ScreenCapture()
         self.gui = None
         
         self.is_listening = False
+        self.screen_reading_enabled = False
         self.is_running = False
         self.listen_thread = None
         
@@ -51,13 +54,29 @@ class InterviewAssistant:
     
     def setup_hotkeys(self):
         """Setup keyboard shortcuts"""
-        keyboard.add_hotkey(Config.HOTKEY_START_STOP, self.toggle_listening)
-        keyboard.add_hotkey(Config.HOTKEY_CLEAR, self.clear_display)
-        keyboard.add_hotkey(Config.HOTKEY_TOGGLE_WINDOW, self.toggle_window)
-        print(f"\nHotkeys configured:")
-        print(f"  {Config.HOTKEY_START_STOP} - Start/Stop listening")
-        print(f"  {Config.HOTKEY_CLEAR} - Clear display")
-        print(f"  {Config.HOTKEY_TOGGLE_WINDOW} - Hide/Show window")
+        try:
+            keyboard.add_hotkey(Config.HOTKEY_START_STOP, self.toggle_listening)
+            keyboard.add_hotkey(Config.HOTKEY_CLEAR, self.clear_display)
+            keyboard.add_hotkey(Config.HOTKEY_TOGGLE_WINDOW, self.toggle_window)
+            keyboard.add_hotkey(Config.HOTKEY_SCREEN_READING, self.toggle_screen_reading)
+            print(f"\n✅ Hotkeys configured:")
+            print(f"  {Config.HOTKEY_START_STOP} - Start/Stop listening")
+            print(f"  {Config.HOTKEY_CLEAR} - Clear display")
+            print(f"  {Config.HOTKEY_TOGGLE_WINDOW} - Hide/Show window")
+            print(f"  {Config.HOTKEY_SCREEN_READING} - Toggle screen reading")
+        except Exception as e:
+            print(f"\n⚠️  WARNING: Hotkeys could not be registered")
+            print(f"   Error: {e}")
+            print(f"   On Windows, keyboard hotkeys require administrator privileges.")
+            print(f"   Please use the buttons in the window instead, or run as administrator.")
+    
+    def toggle_screen_reading(self):
+        """Toggle screen reading on/off"""
+        self.screen_reading_enabled = not self.screen_reading_enabled
+        if self.gui:
+            self.gui.set_screen_reading(self.screen_reading_enabled)
+        status = "enabled" if self.screen_reading_enabled else "disabled"
+        print(f"\n📸 Screen reading {status}")
     
     def toggle_listening(self):
         """Toggle listening state"""
@@ -75,6 +94,7 @@ class InterviewAssistant:
         print("\n[LISTENING] Started listening for questions...")
         
         if self.gui:
+            self.gui.set_recording_status(True)
             self.gui.update_status("Listening for questions...")
         
         # Start listening in a separate thread
@@ -90,6 +110,7 @@ class InterviewAssistant:
         print("\n[STOPPED] Stopped listening")
         
         if self.gui:
+            self.gui.set_recording_status(False)
             self.gui.update_status("Stopped (Ctrl+Shift+L to start)")
     
     def _listen_loop(self):
@@ -123,8 +144,15 @@ class InterviewAssistant:
                                 self.gui.display_question(question)
                                 self.gui.update_status("Generating answer...")
                             
-                            # Generate answer
-                            answer = self.answer_generator.generate_answer(question)
+                            # Capture screen if enabled
+                            screenshot = None
+                            if self.screen_reading_enabled:
+                                screenshot = self.screen_capture.capture_screen()
+                                if screenshot:
+                                    print("📸 Screen captured for analysis")
+                            
+                            # Generate answer with optional screenshot
+                            answer = self.answer_generator.generate_answer(question, screenshot=screenshot)
                             
                             print(f"\n[ANSWER GENERATED]:\n{answer}\n")
                             
@@ -162,11 +190,15 @@ class InterviewAssistant:
         """Run the GUI application"""
         self.gui = OverlayWindow()
         
+        # Connect button callbacks
+        self.gui.on_screen_button_click = self.toggle_screen_reading
+        self.gui.on_listen_button_click = self.toggle_listening
+        
         # Setup hotkeys after GUI is created
         self.setup_hotkeys()
         
         # Update initial status
-        self.gui.update_status("Ready (Ctrl+Shift+L to start)")
+        self.gui.update_status("Ready (Click Start or Ctrl+Shift+L)")
         
         # Run GUI main loop
         self.gui.run()
@@ -188,8 +220,21 @@ class InterviewAssistant:
 
 def main():
     """Entry point"""
-    app = InterviewAssistant()
-    app.run()
+    try:
+        app = InterviewAssistant()
+        app.run()
+    except Exception as e:
+        print(f"\n❌ Application Error: {e}")
+        import traceback
+        traceback.print_exc()
+        print("\n" + "="*60)
+        print("  Troubleshooting Tips:")
+        print("="*60)
+        print("1. NumPy compatibility: Python 3.14 has experimental NumPy support")
+        print("2. Try running as Administrator for hotkey support")
+        print("3. Check that your OpenAI API key is configured in .env")
+        print("4. Make sure all dependencies are installed: pip install -r requirements.txt")
+        input("\nPress Enter to exit...")
 
 
 if __name__ == "__main__":
