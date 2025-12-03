@@ -221,8 +221,14 @@ class InterviewAssistant:
 def main():
     """Entry point"""
     try:
+        # Suppress NumPy warnings
+        import warnings
+        warnings.filterwarnings('ignore')
+        
         app = InterviewAssistant()
         app.run()
+    except KeyboardInterrupt:
+        print("\n\nApplication closed by user.")
     except Exception as e:
         print(f"\n❌ Application Error: {e}")
         import traceback
@@ -230,11 +236,16 @@ def main():
         print("\n" + "="*60)
         print("  Troubleshooting Tips:")
         print("="*60)
-        print("1. NumPy compatibility: Python 3.14 has experimental NumPy support")
-        print("2. Try running as Administrator for hotkey support")
-        print("3. Check that your OpenAI API key is configured in .env")
-        print("4. Make sure all dependencies are installed: pip install -r requirements.txt")
-        input("\nPress Enter to exit...")
+        print("1. Check that your OpenAI API key is configured in .env")
+        print("2. Make sure all dependencies are installed: pip install -r requirements.txt")
+        print("3. Try running as Administrator for hotkey support")
+        print("4. Check the README_INSTALL.md for more help")
+        print("\nPress Enter to exit...")
+        try:
+            input()
+        except:
+            import time
+            time.sleep(5)
 
 
 if __name__ == "__main__":

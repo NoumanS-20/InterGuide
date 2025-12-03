@@ -1,0 +1,109 @@
+================================================================================
+  InterGuide - Python Downgrade Guide
+================================================================================
+
+Your current Python 3.14 has compatibility issues with NumPy (experimental build).
+This guide will help you downgrade to Python 3.12 for full stability.
+
+================================================================================
+  STEP 1: Uninstall Python 3.14
+================================================================================
+
+1. Press Windows + R
+2. Type: appwiz.cpl
+3. Press Enter
+4. Find "Python 3.14.0" in the list
+5. Right-click and select "Uninstall"
+6. Follow the uninstall wizard
+7. Restart your computer (recommended)
+
+================================================================================
+  STEP 2: Download Python 3.12
+================================================================================
+
+1. Go to: https://www.python.org/downloads/
+2. Click "Download Python 3.12.x" (latest 3.12 version)
+3. Save the installer
+
+================================================================================
+  STEP 3: Install Python 3.12
+================================================================================
+
+1. Run the installer you downloaded
+2. ✓ Check "Add python.exe to PATH" (IMPORTANT!)
+3. Click "Install Now"
+4. Wait for installation to complete
+5. Click "Close"
+
+================================================================================
+  STEP 4: Verify Python Installation
+================================================================================
+
+1. Open PowerShell (Windows + X, then select "PowerShell")
+2. Run: python --version
+3. Should show: Python 3.12.x
+4. Run: pip --version
+5. Should show pip version with Python 3.12
+
+================================================================================
+  STEP 5: Reinstall InterGuide Dependencies
+================================================================================
+
+1. In PowerShell, navigate to InterGuide folder:
+   cd "C:\Users\nouma\OneDrive\Desktop\InterGuide"
+
+2. Delete old virtual environment (if exists):
+   Remove-Item -Recurse -Force venv
+
+3. Create new virtual environment:
+   python -m venv venv
+
+4. Activate virtual environment:
+   .\venv\Scripts\Activate.ps1
+
+5. Install dependencies:
+   pip install -r requirements.txt
+
+6. Verify installation:
+   python startup.py
+
+================================================================================
+  STEP 6: Test InterGuide
+================================================================================
+
+Option A - Double-click desktop icon:
+   - Find "InterGuide" icon on your desktop
+   - Double-click to launch
+
+Option B - Run from PowerShell:
+   cd "C:\Users\nouma\OneDrive\Desktop\InterGuide"
+   python startup.py
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+Problem: "python is not recognized"
+Solution: Python wasn't added to PATH during installation. Reinstall and check
+         "Add python.exe to PATH" checkbox.
+
+Problem: pip install fails
+Solution: Run PowerShell as Administrator (Right-click > Run as administrator)
+
+Problem: Virtual environment activation fails
+Solution: Run in PowerShell: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Problem: OpenAI API errors
+Solution: Verify .env file contains your API key
+
+================================================================================
+  NEED HELP?
+================================================================================
+
+If you encounter issues:
+1. Make sure you completely uninstalled Python 3.14
+2. Restart your computer after uninstalling
+3. Verify Python 3.12 is in PATH: python --version
+4. Make sure .env file is in the InterGuide folder with your API key
+
+================================================================================
