@@ -20,15 +20,15 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "author": {
-    "name": "",
+    "name": "Nouman Shafique",
     "email": "",
-    "url": ""
+    "url": "https://github.com/NoumanS-20"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/NoumanS-20/InterGuide"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "dotenv": "^16.3.1",

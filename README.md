@@ -199,6 +199,14 @@ and fall back to `npm run build` when needed.
 
 ---
 
+## ⚖️ Responsible Use
+
+InterGuide includes features designed for minimal visual footprint and rapid screenshot analysis. These capabilities can be misused. Use InterGuide responsibly and ensure you comply with all applicable laws, employer policies, and platform terms of service. Do not use the tool to deceive, invade privacy, or violate security or interview processes.
+
+If you distribute or deploy this software, include a clear notice to end users about intended, lawful uses and obtain any required permissions (for screen recording, audio capture, or system-level integrations).
+
+---
+
 ## 📦 Build & Distribution
 
 Once you are confident with your config:
@@ -237,5 +245,7 @@ If InterGuide helps you in practice rounds or real interviews,
 **consider starring your fork or sharing it with a friend.**
 
 **Made with ❤️ for candidates who want a silent safety net.**
+
+**Created by Nouman Shafique (@NoumanS-20)**
 
 </div>
