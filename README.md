@@ -1,254 +1,241 @@
-# InterGuide - Interview Assistant
-
-An AI-powered Windows application that listens to interview questions and provides intelligent answer suggestions in real-time. Compatible with Zoom, Google Meet, Microsoft Teams (both desktop apps and browser versions).
-
-## Features
-
-- 🎤 **Real-time Audio Capture**: Listens to interview questions through your microphone
-- 🗣️ **Speech-to-Text**: Uses OpenAI Whisper for accurate transcription
-- 🤖 **AI-Powered Answers**: Generates contextual answers using OpenAI GPT models
-- 🪟 **Always-On-Top Overlay**: Transparent window that stays above meeting apps
-- ⌨️ **Keyboard Shortcuts**: Quick controls without interrupting your interview
-- 📝 **Conversation Context**: Maintains conversation history for better context
-- 🎨 **Customizable UI**: Adjustable opacity and positioning
-
-## Prerequisites
-
-- Windows 10/11
-- Python 3.8 or higher
-- OpenAI API key
-- Microphone
-
-## Installation
-
-### 1. Clone or Download the Project
-
-```powershell
-cd C:\Users\nouma\OneDrive\Desktop\InterGuide
-```
-
-### 2. Create a Virtual Environment (Recommended)
-
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-### 3. Install Dependencies
-
-```powershell
-pip install -r requirements.txt
-```
-
-**Note**: Installing `openai-whisper` will also install PyTorch, which is quite large (~2GB). This is normal.
-
-### 4. Install PyAudio (Special Instructions for Windows)
-
-PyAudio can be tricky on Windows. If the pip install fails:
-
-**Option A**: Use a pre-built wheel
-```powershell
-pip install pipwin
-pipwin install pyaudio
-```
-
-**Option B**: Download from [Unofficial Windows Binaries](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
-- Download the appropriate `.whl` file for your Python version
-- Install it: `pip install PyAudio‑0.2.14‑cp311‑cp311‑win_amd64.whl`
-
-### 5. Configure Environment Variables
-
-1. Copy `.env.example` to `.env`:
-   ```powershell
-   copy .env.example .env
-   ```
-
-2. Edit `.env` and add your OpenAI API key:
-   ```
-   OPENAI_API_KEY=sk-your-actual-api-key-here
-   ```
-
-3. (Optional) Adjust other settings like model size, window dimensions, etc.
-
-## Configuration
-
-Edit the `.env` file to customize:
-
-```env
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4o-mini  # or gpt-4, gpt-3.5-turbo
-
-# Whisper Model Size (tiny, base, small, medium, large)
-# Smaller = faster, larger = more accurate
-WHISPER_MODEL_SIZE=base
-
-# Audio Settings
-SAMPLE_RATE=16000
-CHUNK_SIZE=1024
-
-# UI Settings
-WINDOW_OPACITY=0.9
-WINDOW_WIDTH=600
-WINDOW_HEIGHT=400
-```
-
-## Usage
-
-### Starting the Application
-
-```powershell
-python main.py
-```
-
-### Keyboard Shortcuts
-
-- **Ctrl+Shift+L**: Start/Stop listening for questions
-- **Ctrl+Shift+C**: Clear the display and conversation history
-- **Ctrl+Shift+H**: Hide/Show the overlay window
-
-### Workflow
-
-1. **Start the app**: Run `python main.py`
-2. **Position the window**: Drag it to a convenient location on your screen
-3. **Join your interview**: Open Zoom, Google Meet, or Teams
-4. **Start listening**: Press `Ctrl+Shift+L` to begin
-5. **Read answers**: The app will display detected questions and suggested answers
-6. **Respond naturally**: Use the suggestions as guidance, personalize your response
-7. **Clear as needed**: Press `Ctrl+Shift+C` to clear the display
-
-## How It Works
-
-1. **Audio Capture**: The app continuously records audio from your microphone in 5-second chunks
-2. **Speech Recognition**: OpenAI Whisper transcribes the audio to text
-3. **Question Detection**: Only processes audio that contains speech (filters silence)
-4. **Answer Generation**: Sends the question to OpenAI GPT for intelligent answer generation
-5. **Display**: Shows both the question and suggested answer in the overlay window
-
-## Tips for Best Results
-
-### Audio Setup
-- Use a good quality microphone
-- Test your microphone levels before the interview
-- Ensure the interviewer's voice is clear in your speakers/headphones
-- Adjust `SILENCE_THRESHOLD` in `config.py` if needed
-
-### Model Selection
-- **Whisper base**: Good balance of speed and accuracy (recommended)
-- **Whisper small**: Faster, slightly less accurate
-- **Whisper medium/large**: More accurate but slower
-
-### GPT Model
-- **gpt-4o-mini**: Fast and cost-effective (recommended for testing)
-- **gpt-4o**: More accurate and contextual answers
-- **gpt-3.5-turbo**: Fastest and cheapest option
-
-### During the Interview
-- Position the window where you can see it naturally without obvious eye movement
-- Don't read answers verbatim - use them as talking points
-- Pause briefly before answering to appear thoughtful
-- Personalize the answers with your own experience
-
-## Compatibility
-
-### Meeting Platforms
-- ✅ Zoom Desktop App
-- ✅ Zoom in Chrome/Edge
-- ✅ Google Meet (Chrome/Edge)
-- ✅ Microsoft Teams Desktop App
-- ✅ Microsoft Teams (Chrome/Edge)
-
-### Browser Compatibility
-- Chrome (all features)
-- Edge (all features)
-- Firefox (all features)
-
-## Troubleshooting
-
-### "No module named 'pyaudio'"
-- Follow the PyAudio installation instructions in step 4 above
-- Make sure you're using the correct Python version wheel file
-
-### "OPENAI_API_KEY is required"
-- Ensure your `.env` file exists and contains your API key
-- Check that there are no extra spaces or quotes around the key
-
-### Audio Not Being Captured
-- Check Windows sound settings - ensure your microphone is set as default
-- Test with: `python -c "from audio_capture import AudioCapture; a = AudioCapture(); a.list_audio_devices()"`
-- Adjust `SILENCE_THRESHOLD` in `config.py` if audio is always detected as silent
-
-### Transcription Not Working
-- First run will download the Whisper model (this can take a few minutes)
-- Try a smaller model size if having performance issues
-- Ensure PyTorch is installed correctly: `pip list | grep torch`
-
-### Window Not Showing
-- Press `Ctrl+Shift+H` to show the window
-- Check if it's hidden behind other windows
-- Restart the application
-
-### High CPU/Memory Usage
-- Use a smaller Whisper model (tiny or base)
-- Switch to `gpt-3.5-turbo` for faster responses
-- Close other unnecessary applications
-
-## Cost Considerations
-
-### OpenAI API Costs
-- **Whisper**: Runs locally, no API costs
-- **GPT-4o-mini**: ~$0.15 per 1M input tokens, ~$0.60 per 1M output tokens
-- **GPT-4o**: ~$2.50 per 1M input tokens, ~$10 per 1M output tokens
-
-Typical interview (1 hour, ~20 questions):
-- With gpt-4o-mini: ~$0.10-0.30
-- With gpt-4o: ~$1-3
-
-## Privacy & Ethics
-
-⚠️ **Important Disclaimer**:
-- This tool is for educational and practice purposes
-- Using AI assistance during real interviews may violate company policies
-- Many companies consider this cheating and may revoke offers if discovered
-- Use responsibly and ethically
-- Best used for interview preparation and practice sessions
-
-## File Structure
-
-```
-InterGuide/
-├── main.py                  # Main application entry point
-├── config.py                # Configuration settings
-├── audio_capture.py         # Audio recording functionality
-├── speech_recognition.py    # Whisper integration
-├── answer_generator.py      # OpenAI GPT integration
-├── overlay_gui.py           # GUI overlay window
-├── requirements.txt         # Python dependencies
-├── .env.example            # Example environment variables
-├── .env                    # Your actual config (create this)
-└── README.md               # This file
-```
-
-## Contributing
-
-Feel free to submit issues, fork the repository, and create pull requests for any improvements.
-
-## License
-
-MIT License - feel free to use and modify as needed.
-
-## Disclaimer
-
-This software is provided as-is for educational purposes. The authors are not responsible for any misuse or consequences of using this software. Always follow ethical guidelines and company policies during interviews.
-
-## Support
-
-For issues or questions:
-1. Check the Troubleshooting section above
-2. Ensure all dependencies are correctly installed
-3. Verify your `.env` configuration
-4. Check that your OpenAI API key is valid and has credits
+<div align="center">
+
+# 🧠 InterGuide
+
+**Invisible AI Interview Copilot for Any Screen**
+
+<!-- Status & Meta Badges -->
+<p>
+  <img src="https://img.shields.io/badge/Status-Active%20Development-22c55e?style=for-the-badge&logo=github" alt="Status" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-0ea5e9?style=for-the-badge&logo=electron" alt="Platforms" />
+  <img src="https://img.shields.io/badge/AI-Gemini%20Powered-f97316?style=for-the-badge&logo=google" alt="AI" />
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Use%20Case-Technical%20Interviews-6366f1?style=flat-square" />
+  <img src="https://img.shields.io/badge/Stealth-Overlay%20%2F%20Click--Through-f97316?style=flat-square" />
+  <img src="https://img.shields.io/badge/Mode-Screenshot%20%2B%20Chat-22c55e?style=flat-square" />
+</p>
 
 ---
 
-**Good luck with your interview preparation! 🚀**
+</div>
+
+InterGuide is a **stealth AI assistant** that lives as a tiny overlay on your screen. 
+
+- Capture your **live interview screen** in one shortcut.
+- Let **Gemini** analyze the question.
+- Get **structured, language‑specific answers** in a clean, draggable window.
+- All while staying visually minimal and disguised as a normal system process.
+
+---
+
+## ✨ Feature Highlights
+
+### 🥷 Stealth‑First Design
+- Floating overlay that looks like a regular utility bar.
+- Can be set to **click‑through** so it doesnt block your clicks.
+- Hides from screen recordings on many setups using content protection.
+- Window titles and icons can be disguised as system apps (Terminal / Activity / Settings).
+
+### 🧠 Smart AI Assistance
+- Powered by **Google Gemini** (configurable with your own API key).
+- Optimized prompt for **DSA / coding interview** style problems.
+- Understands **screenshots of coding questions** and returns:
+  - Explanation in plain English.
+  - Clean code in your chosen language.
+  - Time & space complexity.
+
+### 💬 Natural Interaction
+- Floating **overlay bar**:
+  - Screenshot capture button.
+  - Mic button (when speech is configured).
+  - Skill selector (DSA by default).
+  - Language selector (C++, C, Java, Python, JavaScript).
+- **Answer window**:
+  - Split view (text + code) with syntax highlighting.
+  - Draggable, resizable, always on top.
+- **Chat window** for longer back‑and‑forth conversations.
+
+### 🎛️ Global Shortcuts (Default)
+
+> All shortcuts work even when InterGuide windows are in click‑through mode.
+
+| Action                  | Shortcut                      |
+|-------------------------|-------------------------------|
+| Screenshot & Analyze    | `Ctrl/Cmd + Shift + S`        |
+| Toggle Visibility       | `Ctrl/Cmd + Shift + V`        |
+| Toggle Interaction      | `Ctrl/Cmd + Shift + I` or `Alt + A` |
+| Open Chat               | `Ctrl/Cmd + Shift + C`        |
+| Toggle Speech (if set)  | `Alt + R`                     |
+| Open Settings           | `Ctrl/Cmd + ,`                |
+
+---
+
+## 🚀 1‑Command Setup
+
+InterGuide is designed so you can go from **zero to running** with a single command.
+
+```bash
+./setup.sh
+```
+
+That script will:
+
+1. **Check Environment**
+   - Validate Node.js & npm.
+   - Detect your OS (Windows / macOS / Linux).
+2. **Prepare Config**
+   - Create a `.env` file (or reuse existing).
+   - Guide you to paste your **Gemini API key**.
+3. **Install Dependencies**
+   - Run `npm install` or optionally `npm ci`.
+4. **Launch InterGuide**
+   - Start the Electron app ready for use.
+
+> If the script detects that your API key is missing or placeholder, it will **stop with a clear message** and show you exactly what to do.
+
+### 🔑 Getting Your Gemini API Key
+
+1. Go to **[Google AI Studio](https://aistudio.google.com/)**.
+2. Create a new API key.
+3. When `setup.sh` pauses and asks, open `.env` and set:
+
+```env
+GEMINI_API_KEY=your_real_gemini_api_key_here
+```
+
+Then re‑run:
+
+```bash
+./setup.sh
+```
+
+---
+
+## ⚙️ Advanced Setup Options
+
+You can customize behavior with flags:
+
+```bash
+./setup.sh --help
+```
+
+Common flows:
+
+```bash
+# Install deps, configure, then build a distributable for this OS
+./setup.sh --build
+
+# Install deps and configure only, do NOT auto‑run the app
+./setup.sh --no-run
+
+# Use npm ci when package-lock.json exists (CI‑style clean install)
+./setup.sh --ci
+
+# Best‑effort install of audio/system deps (e.g., sox for mic capture)
+./setup.sh --install-system-deps
+```
+
+Under the hood, the script will select the right build target:
+
+- macOS → `npm run build:mac`
+- Windows → `npm run build:win`
+- Linux → `npm run build:linux`
+
+and fall back to `npm run build` when needed.
+
+---
+
+## 💡 Day‑to‑Day Usage
+
+1. **Start InterGuide**
+   - Either via `npm start` or simply re‑run `./setup.sh` and let it launch.
+
+2. **Position the Overlay**
+   - Drag the main bar to the top or side of your screen.
+   - Use `Alt + A` to switch between **interactive** and **click‑through**.
+
+3. **Capture a Question**
+   - Hit `Ctrl/Cmd + Shift + S` to take a screenshot.
+   - InterGuide sends the image to Gemini with your DSA prompt.
+
+4. **Read & Act**
+   - Answer window will pop up with explanation and code.
+   - Copy code and paste into your IDE/editor.
+
+5. **Refine via Chat**
+   - `Ctrl/Cmd + Shift + C` to open chat.
+   - Ask follow‑ups, change constraints, request optimizations, etc.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Electron** for cross‑platform desktop app.
+- **Node.js** for backend logic and window management.
+- **Google Gemini API** for LLM reasoning & image understanding.
+- **Custom overlay windows** with content protection and always‑on‑top logic.
+
+---
+
+## 🧪 Troubleshooting Checklist
+
+**Setup doesnt run:**
+- Ensure `node -v` shows Node **18+**.
+- On Windows, run in **Git Bash / WSL / any bash shell**.
+
+**App starts but API fails:**
+- Double‑check `GEMINI_API_KEY` in `.env`.
+- Make sure the key still works in Google AI Studio.
+
+**Screenshot capture issues (macOS):**
+- System Settings → Privacy & Security → **Screen Recording**.
+- Enable permissions for your terminal/app launching InterGuide.
+
+**Voice / mic not working:**
+- Voice support is optional and depends on `sox` + Azure Speech keys.
+- You can ignore mic warnings if you only want screenshot/chat.
+
+---
+
+## 📦 Build & Distribution
+
+Once you are confident with your config:
+
+```bash
+# Build for your current OS
+./setup.sh --build
+
+# or directly
+npm run build:win    # Windows
+npm run build:mac    # macOS
+npm run build:linux  # Linux
+```
+
+The packaged app will be created under `dist/` using **electron-builder**.
+
+---
+
+## ✅ Status & Roadmap (High‑Level)
+
+- [x] Stealth floating overlay bar.
+- [x] Screenshot → Gemini → Answer flow.
+- [x] Split answer window (text + code) with markdown and syntax highlighting.
+- [x] Chat window with session history.
+- [x] Basic stealth modes (name/icon disguise, taskbar hiding, content protection).
+- [ ] Auto‑hide when screen sharing is detected.
+- [ ] Multiple AI backends (OpenAI, Anthropic, local models).
+- [ ] Export sessions as Markdown/PDF.
+- [ ] Advanced stealth modes and behavioral profiles.
+
+---
+
+<div align="center">
+
+If InterGuide helps you in practice rounds or real interviews,
+**consider starring your fork or sharing it with a friend.**
+
+**Made with ❤️ for candidates who want a silent safety net.**
+
+</div>

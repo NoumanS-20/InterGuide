@@ -1,50 +1,5 @@
-# Virtual Environment
-venv/
-.venv/
-env/
-ENV/
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-
-# Environment variables and secrets (IMPORTANT - NEVER COMMIT)
+node_modules/
 .env
-.env.local
-.env.*.local
-*.key
-secrets.json
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Logs
-*.log
-
-# Audio files
-*.wav
-*.mp3
-*.flac
-*.ogg
-
-# Temporary files
-temp/
-tmp/
-*.tmp
-
-# OS files
+eng.traineddata
+dist/
 .DS_Store
-Thumbs.db
-desktop.ini
