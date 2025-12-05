@@ -40,48 +40,46 @@ class AnswerGenerator:
             return ""
         
         try:
+            print(f"[DEBUG] generate_answer called with screenshot={'Yes' if screenshot else 'No'}")
             # Build messages
             messages = [
                 {"role": "system", "content": self.system_prompt}
             ]
-            
             # Add context if provided
             if context:
                 messages.append({
                     "role": "system",
                     "content": f"Additional context: {context}"
                 })
-            
             # Add conversation history (last 3 exchanges)
             messages.extend(self.conversation_history[-6:])
-            
             # Prepare user message content
             user_content = [{"type": "text", "text": f"Interview question: {question}"}]
-            
             # Add screenshot if provided (for vision model)
             if screenshot and "gpt-4" in self.model:
                 try:
-                    # Convert PIL Image to base64
+                    print("[DEBUG] Processing screenshot for vision model...")
                     buffered = BytesIO()
                     screenshot.save(buffered, format="PNG")
                     img_base64 = base64.b64encode(buffered.getvalue()).decode()
-                    
                     user_content.append({
                         "type": "image_url",
                         "image_url": {
                             "url": f"data:image/png;base64,{img_base64}",
-                            "detail": "low"  # Use 'low' for cost efficiency
+                            "detail": "low"
                         }
                     })
+                    print("[DEBUG] Screenshot successfully encoded and added to user_content.")
                 except Exception as e:
                     print(f"Warning: Could not process screenshot: {e}")
-            
+            else:
+                print("[DEBUG] No screenshot or model does not support vision.")
             # Add current question
             messages.append({
                 "role": "user",
                 "content": user_content if screenshot and "gpt-4" in self.model else f"Interview question: {question}"
             })
-            
+            print(f"[DEBUG] Sending messages to OpenAI: {messages[-1]}")
             # Generate response
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -89,9 +87,8 @@ class AnswerGenerator:
                 temperature=0.7,
                 max_tokens=500
             )
-            
             answer = response.choices[0].message.content.strip()
-            
+            print(f"[DEBUG] OpenAI response: {answer[:80]}...")
             # Update conversation history
             self.conversation_history.append({
                 "role": "user",
@@ -101,9 +98,7 @@ class AnswerGenerator:
                 "role": "assistant",
                 "content": answer
             })
-            
             return answer
-            
         except Exception as e:
             print(f"Error generating answer: {e}")
             return f"Error: {str(e)}"

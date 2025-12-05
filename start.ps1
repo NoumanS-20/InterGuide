@@ -37,7 +37,7 @@ Write-Host "  $pythonVersion" -ForegroundColor White
 
 # Test imports
 Write-Host "`nTesting dependencies..." -ForegroundColor Cyan
-$testResult = python -c "import sounddevice, speech_recognition, openai, keyboard, pynput; print('OK')" 2>&1
+$null = python -c "import sounddevice, speech_recognition, openai, keyboard, pynput; print('OK')" 2>&1
 if ($LASTEXITCODE -eq 0) {
     Write-Host "  ✅ All dependencies installed" -ForegroundColor Green
 } else {

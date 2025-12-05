@@ -221,12 +221,17 @@ class OverlayWindow:
             self.is_visible = True
     
     def on_screen_button_click(self):
-        """Placeholder for screen button click - will be connected in main.py"""
-        pass
-    
+        # Directly call the connected callback if set
+        if hasattr(self, '_screen_callback') and self._screen_callback:
+            self._screen_callback()
+    def set_screen_callback(self, callback):
+        self._screen_callback = callback
     def on_listen_button_click(self):
-        """Placeholder for listen button click - will be connected in main.py"""
-        pass
+        # Directly call the connected callback if set
+        if hasattr(self, '_listen_callback') and self._listen_callback:
+            self._listen_callback()
+    def set_listen_callback(self, callback):
+        self._listen_callback = callback
             
     def show(self):
         """Show the window"""

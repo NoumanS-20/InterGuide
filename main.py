@@ -150,12 +150,15 @@ class InterviewAssistant:
                                 screenshot = self.screen_capture.capture_screen()
                                 if screenshot:
                                     print("📸 Screen captured for analysis")
-                            
+                                else:
+                                    print("⚠️  Screen capture failed or returned None")
+                            else:
+                                print("[DEBUG] Screen reading is OFF, not capturing screen.")
                             # Generate answer with optional screenshot
+                            print(f"[DEBUG] Calling generate_answer with screenshot={'Yes' if screenshot else 'No'}")
                             answer = self.answer_generator.generate_answer(question, screenshot=screenshot)
-                            
+                            print(f"[DEBUG] Answer received: {answer[:80]}...")
                             print(f"\n[ANSWER GENERATED]:\n{answer}\n")
-                            
                             if self.gui:
                                 self.gui.display_answer(answer)
                                 self.gui.update_status("Answer ready - Listening...")
@@ -190,9 +193,9 @@ class InterviewAssistant:
         """Run the GUI application"""
         self.gui = OverlayWindow()
         
-        # Connect button callbacks
-        self.gui.on_screen_button_click = self.toggle_screen_reading
-        self.gui.on_listen_button_click = self.toggle_listening
+        # Connect button callbacks using new setter methods
+        self.gui.set_screen_callback(self.toggle_screen_reading)
+        self.gui.set_listen_callback(self.toggle_listening)
         
         # Setup hotkeys after GUI is created
         self.setup_hotkeys()
